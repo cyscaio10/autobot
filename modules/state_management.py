@@ -19,7 +19,7 @@ def check_new_apostas():
     pass
 
 def log_error(aposta, error):
-    with open(STATE_FILE, 'r') as f:
+    with open(STATE_FILE, 'r') as f):
         state = json.load(f)
     state['errors'].append({'aposta': aposta, 'error': str(error)})
     with open(STATE_FILE, 'w') as f:
@@ -33,7 +33,7 @@ def save_state(state):
         json.dump(state, f)
 
 def load_state():
-    with open(STATE_FILE, 'r') as f:
+    with open(STATE_FILE, 'r') as f):
         state = json.load(f)
     return state
 
