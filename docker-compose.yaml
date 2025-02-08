@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  bet_automation_1:
+    build: .
+    container_name: bet_automation_1
+    networks:
+      - bet_net
+
+  bet_automation_2:
+    build: .
+    container_name: bet_automation_2
+    networks:
+      - bet_net
+
+  bet_automation_3:
+    build: .
+    container_name: bet_automation_3
+    networks:
+      - bet_net
+
+  bet_automation_4:
+    build: .
+    container_name: bet_automation_4
+    networks:
+      - bet_net
+
+networks:
+  bet_net:
+    driver: bridge
