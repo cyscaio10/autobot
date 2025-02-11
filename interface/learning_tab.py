@@ -1,57 +1,31 @@
 import tkinter as tk
-from tkinter import filedialog
-from PIL import Image, ImageTk
+from tkinter import ttk
 
 class LearningTab:
-    def __init__(self, tab_control):
-        self.tab = tk.Frame(tab_control)
+    def __init__(self, parent):
+        # Cria o frame que será a aba Learning
+        self.tab = tk.Frame(parent)
         self.create_widgets()
 
     def create_widgets(self):
-        self.lbl = tk.Label(self.tab, text="Learning")
-        self.lbl.pack(pady=10)
+        # Título da aba
+        header = tk.Label(self.tab, text="Learning Tab", font=("Helvetica", 16))
+        header.pack(pady=10)
 
-        self.load_image_btn = tk.Button(self.tab, text="Load Image", command=self.load_image)
-        self.load_image_btn.pack(pady=10)
+        # Área para exibir dados – usando um Treeview como exemplo
+        self.tree = ttk.Treeview(self.tab, columns=("Value",), show="headings")
+        self.tree.heading("Value", text="Value")
+        self.tree.pack(fill="both", expand=True, padx=10, pady=10)
 
-        self.canvas = tk.Canvas(self.tab, width=800, height=600)
-        self.canvas.pack()
+        # Botão para demonstrar adição de dados na árvore
+        add_btn = tk.Button(self.tab, text="Add Data", command=self.add_data)
+        add_btn.pack(pady=5)
 
-        self.instruction_lbl = tk.Label(self.tab, text="Click and drag to draw a rectangle around the area of interest.")
-        self.instruction_lbl.pack(pady=10)
-
-        self.save_btn = tk.Button(self.tab, text="Save Annotation", command=self.save_annotation)
-        self.save_btn.pack(pady=10)
-
-        self.annotations = []
-
-    def load_image(self):
-        file_path = filedialog.askopenfilename()
-        self.image = Image.open(file_path)
-        self.image_tk = ImageTk.PhotoImage(self.image)
-        self.canvas.create_image(0, 0, anchor=tk.NW, image=self.image_tk)
-        self.canvas.bind("<ButtonPress-1>", self.on_button_press)
-        self.canvas.bind("<B1-Motion>", self.on_mouse_drag)
-        self.canvas.bind("<ButtonRelease-1>", self.on_button_release)
-
-    def on_button_press(self, event):
-        self.start_x = event.x
-        self.start_y = event.y
-        self.rect = self.canvas.create_rectangle(self.start_x, self.start_y, self.start_x, self.start_y, outline='red')
-
-    def on_mouse_drag(self, event):
-        self.canvas.coords(self.rect, self.start_x, self.start_y, event.x, event.y)
-
-    def on_button_release(self, event):
-        end_x = event.x
-        end_y = event.y
-        self.annotations.append((self.start_x, self.start_y, end_x, end_y))
-        self.save_annotation()
-
-    def save_annotation(self):
-        # Save the annotations to a file or database
-        print("Annotations saved:", self.annotations)
-
+    def add_data(self):
+        # Exemplo de adição de linha com dados fictícios
+        self.tree.insert("", "end", values=("Sample Data",))
 def create_tab(tab_control):
-    tab = LearningTab(tab_control)
-    return tab.tab
+    lbl = tk.Label(tab, text="Dashboard")
+    lbl.pack(pady=10)
+
+  

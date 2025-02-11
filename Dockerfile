@@ -1,25 +1,30 @@
-# Use uma imagem base do Python
-FROM python:3.9-slim
+FROM python:3.9
 
-# Instale as dependências do sistema necessárias para o tkinter, opencv e outras bibliotecas
+# Instalação de dependências do sistema (incluindo Firefox e GeckoDriver)
 RUN apt-get update && apt-get install -y \
-    python3-tk \
-    libsm6 \
-    libxext6 \
-    libxrender-dev \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+    firefox-esr \
+    wget \
+    libgtk-3-0 \
+    libdbus-glib-1-2 \
+    tesseract-ocr
 
-# Defina o diretório de trabalho no contêiner
+# Instalação do GeckoDriver
+RUN wget https://github.com/mozilla/geckodriver/releases/download/v0.30.0/geckodriver-v0.30.0-linux64.tar.gz \
+    && tar -xvzf geckodriver-v0.30.0-linux64.tar.gz \
+    && chmod +x geckodriver \
+    && mv geckodriver /usr/local/bin/ \
+    && rm geckodriver-v0.30.0-linux64.tar.gz
+
 WORKDIR /app
 
-# Copie os arquivos de requisitos e instale as dependências
-COPY requirements.txt .
-RUN pip install --upgrade pip
-RUN pip install --no-cache-dir -r requirements.txt
-
-# Copie o restante do código da aplicação
+# Copia todo o código para o container
 COPY . .
 
-# Comando para iniciar o programa
+# Instala as dependências Python (certifique-se de ter um requirements.txt configurado)
+RUN pip install --upgrade pip && pip install -r requirements.txt
+
+# Expor porta se a interface ou API necessitar (opcional)
+EXPOSE 8080
+
+# Comando de entrada, executa o programa
 CMD ["python", "main.py"]
