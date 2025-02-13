@@ -1,5 +1,5 @@
 websockets==10.4
-opencv-python==4.7.0
+opencv-python==4.5.5.64  # Alterado para uma versão mais estável e disponível
 pytesseract==0.3.10
 selenium==4.9.1
 pillow==9.5.0
@@ -10,3 +10,4 @@ pandas==1.5.3
 matplotlib==3.7.1
 scikit-learn==0.24.2
 joblib==1.2.0
+beautifulsoup4==4.9.3  # Adicionado beautifulsoup4
