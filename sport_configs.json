@@ -1,0 +1,39 @@
+from .bet_processor import BetProcessor
+
+class AutomationManager:
+    def __init__(self):
+        # ... outros inicializadores ...
+        self.bet_processor = BetProcessor()
+
+    def process_new_bet(self, bet_info):
+        success, result = self.bet_processor.process_bet(bet_info)
+        if success:
+            self.register_bet(result)
+            return True
+        else:
+            self.notification_system.notify_operator(f"Erro na aposta: {result}")
+            return False
+{
+    "futebol": {
+        "duration": 120,
+        "min_odds": 1.2,
+        "max_odds": 10.0
+    },
+    "basquete": {
+        "duration": 150,
+        "min_odds": 1.1,
+        "max_odds": 15.0
+    },
+    "futebol_americano": {
+        "duration": 210,
+        "min_odds": 1.1,
+        "max_odds": 20.0
+    },
+    "tenis": {
+        "duration": 180,
+        "min_odds": 1.05,
+        "max_odds": 25.0
+    }
+
+}
+

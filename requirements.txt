@@ -1,7 +1,0 @@
-websockets==10.4
-opencv-python==4.7.0
-pytesseract==0.3.10
-selenium==4.9.1
-pillow==9.5.0
-docker==6.1.2
-aiohttp==3.8.4

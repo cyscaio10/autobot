@@ -6,6 +6,7 @@ class TestBrowserAutomation(unittest.TestCase):
         dados_aposta = {'time': 'Time A vs Time B', 'odds': '1.5', 'valor': '100'}
         browser_automation.check_aposta(dados_aposta)
         # Adicione verificações de assertivas conforme necessário
+        # Exemplo: Verificar se a página foi carregada corretamente (mocking necessário)
 
 if __name__ == '__main__':
     unittest.main()

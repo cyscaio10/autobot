@@ -1,0 +1,36 @@
+
+from .bet_processor import BetProcessor
+
+class AutomationManager:
+    def __init__(self):
+        # ... outros inicializadores ...
+        self.bet_processor = BetProcessor()
+
+    def process_new_bet(self, bet_info):
+        success, result = self.bet_processor.process_bet(bet_info)
+        if success:
+            self.register_bet(result)
+            return True
+        else:
+            self.notification_system.notify_operator(f"Erro na aposta: {result}")
+            return False
+{
+    "single": {
+        "description": "Aposta em um único evento"
+    },
+    "multiple": {
+        "description": "Aposta em múltiplos eventos, todos devem ser acertados"
+    },
+    "system": {
+        "description": "Aposta em combinações de eventos selecionados"
+    },
+    "parlay": {
+        "description": "Aposta em múltiplos eventos com odds acumulativas"
+    },
+    "teaser": {
+        "description": "Aposta em múltiplos eventos com ajuste de pontos/odds"
+    },
+    "if_bet": {
+        "description": "Aposta condicional baseada no resultado de outra aposta"
+    }
+}

@@ -1,42 +1,51 @@
-import docker
-import logging
-import os
-from typing import List, Dict
+import asyncio
+import websockets
+from .containers.atendimento_container import AtendimentoContainer
+from .containers.conferencia_container import ConferenciaContainer
 
 class ContainerManager:
     def __init__(self):
-        self.client = docker.from_env()  # Corrigido de from_client() para from_env()
-        self.containers_path = os.path.join('modules', 'containers')        
-    def build_containers(self):
-        """Constrói todos os containers necessários"""
-        containers = ['conferencia', 'atendimento']
-        
-        for container in containers:
-            self.build_container(container)
-            
-    def build_container(self, container_type: str):
-        """Constrói um container específico"""
-        dockerfile_path = os.path.join(self.containers_path, container_type)
-        
-        try:
-            logging.info(f"Iniciando build do container {container_type}")
-            image, logs = self.client.images.build(
-                path=dockerfile_path,
-                tag=f"autobot-{container_type}:latest",
-                rm=True
-            )
-            logging.info(f"Container {container_type} construído com sucesso")
-            return image
-        except Exception as e:
-            logging.error(f"Erro ao construir container {container_type}: {e}")
-            raise
-            
-    def deploy_containers(self):
-        """Deploy de todos os containers"""
-        try:
-            self.build_containers()
-            logging.info("Todos os containers foram construídos com sucesso")
-            return True
-        except Exception as e:
-            logging.error(f"Erro no deploy dos containers: {e}")
-            return False
+        self.containers = {
+            "atendimento": AtendimentoContainer(),
+            "conferencia": ConferenciaContainer()
+        }
+        self.status = {}
+
+    async def start_container(self, container_type):
+        if container_type in self.containers:
+            await self.containers[container_type].start()
+            self.status[container_type] = "running"
+        else:
+            raise ValueError(f"Container type '{container_type}' not found")
+
+    async def stop_container(self, container_type):
+        if container_type in self.containers:
+            await self.containers[container_type].stop()
+            self.status[container_type] = "stopped"
+        else:
+            raise ValueError(f"Container type '{container_type}' not found")
+
+    async def monitor_containers(self):
+        while True:
+            for container_type, container in self.containers.items():
+                status = await container.get_status()
+                self.status[container_type] = status
+            await asyncio.sleep(5)  # Check every 5 seconds
+
+    async def handle_websocket(self, websocket, path):
+        while True:
+            try:
+                message = await websocket.recv()
+                # Process incoming messages (e.g., commands to start/stop containers)
+                response = await self.process_message(message)
+                await websocket.send(response)
+            except websockets.exceptions.ConnectionClosed:
+                break
+
+    async def process_message(self, message):
+        # Implement logic to process incoming messages
+        pass
+
+    def get_container_status(self):
+        return self.status
+

@@ -9,6 +9,10 @@ class TestImageRecognition(unittest.TestCase):
         self.assertIn('odds', dados_aposta)
         self.assertIn('valor', dados_aposta)
         self.assertIn('horario', dados_aposta)
+        self.assertEqual(dados_aposta['time'], 'expected_time')
+        self.assertEqual(dados_aposta['odds'], 'expected_odds')
+        self.assertEqual(dados_aposta['valor'], 'expected_valor')
+        self.assertEqual(dados_aposta['horario'], 'expected_horario')
 
 if __name__ == '__main__':
     unittest.main()
