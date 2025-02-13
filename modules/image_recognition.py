@@ -2,6 +2,9 @@ import cv2
 import pytesseract
 from PIL import Image
 import numpy as np
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.naive_bayes import MultinomialNB
+import joblib
 
 class ImageRecognition:
     def __init__(self):
@@ -9,7 +12,30 @@ class ImageRecognition:
         Inicializa o sistema de reconhecimento de imagem.
         """
         # Configurar o Tesseract (ajuste o caminho conforme necessário)
-        pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+        pytesseract.pytesseract.tesseract_cmd = r'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
+        self.model = self.load_model()
+
+    def load_model(self):
+        """
+        Carrega o modelo de aprendizado de máquina treinado.
+        """
+        try:
+            model = joblib.load('bet_recognition_model.pkl')
+            return model
+        except FileNotFoundError:
+            return None
+
+    def train_model(self, texts, labels):
+        """
+        Treina o modelo de reconhecimento de apostas.
+        """
+        vectorizer = CountVectorizer()
+        X_train = vectorizer.fit_transform(texts)
+        model = MultinomialNB()
+        model.fit(X_train, labels)
+        joblib.dump(model, 'bet_recognition_model.pkl')
+        joblib.dump(vectorizer, 'vectorizer.pkl')
+        self.model = model
 
     def process_image(self, image_path):
         """
@@ -28,12 +54,23 @@ class ImageRecognition:
         """
         Extrai informações de aposta do texto reconhecido.
         """
-        bet_info = {
-            'type': 'unknown',
-            'events': [],
-            'odds': [],
-            'stake': 0
-        }
+        if self.model:
+            vectorizer = joblib.load('vectorizer.pkl')
+            X = vectorizer.transform([text])
+            prediction = self.model.predict(X)
+            bet_info = {
+                'type': prediction[0],
+                'events': [],
+                'odds': [],
+                'stake': 0
+            }
+        else:
+            bet_info = {
+                'type': 'unknown',
+                'events': [],
+                'odds': [],
+                'stake': 0
+            }
 
         lines = text.split('\n')
         for line in lines:

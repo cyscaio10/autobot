@@ -1,0 +1,11 @@
+websockets==10.4
+opencv-python==4.7.0
+pytesseract==0.3.10
+selenium==4.9.1
+pillow==9.5.0
+docker==6.1.2
+aiohttp==3.8.4
+numpy==1.24.3
+pandas==1.5.3
+matplotlib==3.7.1
+scikit-learn==0.24.2 
