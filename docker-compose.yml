@@ -3,7 +3,8 @@ services:
     build: .
     volumes:
       - .:/app
+      - /tmp/.X11-unix:/tmp/.X11-unix
+    environment:
+      - DISPLAY=${DISPLAY}
     ports:
       - "8080:8080"
-    environment:
-      - DISPLAY=host.docker.internal:0.0
