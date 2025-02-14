@@ -6,6 +6,7 @@ services:
       dockerfile: Dockerfile.planilha
     volumes:
       - .:/app
+      - ./backups:/app/backups
 
   chat:
     build:
@@ -13,6 +14,7 @@ services:
       dockerfile: Dockerfile.chat
     volumes:
       - .:/app
+      - ./backups:/app/backups
 
   apostas:
     build:
@@ -20,6 +22,7 @@ services:
       dockerfile: Dockerfile.apostas
     volumes:
       - .:/app
+      - ./backups:/app/backups
 
   flashscore:
     build:
@@ -27,6 +30,7 @@ services:
       dockerfile: Dockerfile.flashscore
     volumes:
       - .:/app
+      - ./backups:/app/backups
 
   gerenciamento:
     build:
@@ -34,3 +38,4 @@ services:
       dockerfile: Dockerfile.gerenciamento
     volumes:
       - .:/app
+      - ./backups:/app/backups
