@@ -1,10 +1,36 @@
+version: '3.9'
 services:
-  betting-bot:
-    build: .
+  planilha:
+    build:
+      context: .
+      dockerfile: Dockerfile.planilha
     volumes:
       - .:/app
-      - /tmp/.X11-unix:/tmp/.X11-unix
-    environment:
-      - DISPLAY=${DISPLAY}
-    ports:
-      - "8080:8080"
+
+  chat:
+    build:
+      context: .
+      dockerfile: Dockerfile.chat
+    volumes:
+      - .:/app
+
+  apostas:
+    build:
+      context: .
+      dockerfile: Dockerfile.apostas
+    volumes:
+      - .:/app
+
+  flashscore:
+    build:
+      context: .
+      dockerfile: Dockerfile.flashscore
+    volumes:
+      - .:/app
+
+  gerenciamento:
+    build:
+      context: .
+      dockerfile: Dockerfile.gerenciamento
+    volumes:
+      - .:/app
