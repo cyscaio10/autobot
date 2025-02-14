@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import sys
 import asyncio
+import PyQ
 from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QVBoxLayout, QWidget
 from PyQt5.QtCore import QThread, pyqtSignal
 from modules.automation_manager import AutomationManager
