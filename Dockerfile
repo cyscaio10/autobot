@@ -8,7 +8,8 @@ RUN apt-get update && apt-get install -y \
     libdbus-glib-1-2 \
     tesseract-ocr \
     libxkbcommon-x11-0 \
-    libxcb-xinerama0
+    libxcb-xinerama0 \
+    libgl1-mesa-glx
 
 # Instalação do GeckoDriver
 RUN wget https://github.com/mozilla/geckodriver/releases/download/v0.30.0/geckodriver-v0.30.0-linux64.tar.gz \
