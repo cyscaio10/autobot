@@ -1,41 +1,41 @@
-version: '3.9'
+version: '3'
 services:
-  planilha:
+  main_interface:
     build:
       context: .
-      dockerfile: Dockerfile.planilha
+      dockerfile: Dockerfile.interface
     volumes:
       - .:/app
-      - ./backups:/app/backups
+    ports:
+      - "8000:8000"
 
-  chat:
+  image_processing:
     build:
       context: .
-      dockerfile: Dockerfile.chat
+      dockerfile: Dockerfile.image
     volumes:
       - .:/app
-      - ./backups:/app/backups
 
-  apostas:
+  spreadsheet_service:
     build:
       context: .
-      dockerfile: Dockerfile.apostas
+      dockerfile: Dockerfile.spreadsheet
     volumes:
       - .:/app
-      - ./backups:/app/backups
 
-  flashscore:
+  flashscore_service:
     build:
       context: .
       dockerfile: Dockerfile.flashscore
     volumes:
       - .:/app
-      - ./backups:/app/backups
 
-  gerenciamento:
+  betting_site_service:
     build:
       context: .
-      dockerfile: Dockerfile.gerenciamento
+      dockerfile: Dockerfile.betting
     volumes:
       - .:/app
-      - ./backups:/app/backups
+
+volumes:
+  app_data:

@@ -1,109 +1,99 @@
 import tkinter as tk
-from tkinter import ttk, messagebox
-from .notification import create_notification_system
-from .dashboard_tab import create_tab as create_dashboard_tab
-from .logs_tab import create_tab as create_logs_tab
-from .settings_tab import create_tab as create_settings_tab
-from .configuration_tab import ConfigurationTab
-from modules.websocket_manager import WebSocketManager
+from tkinter import ttk
+from PIL import Image, ImageTk
 
 class MainInterface:
-    def __init__(self):
-        self.root = tk.Tk()
-        self.root.title("AutoBot")
-        self.root.geometry("1200x800")
-        
-        # Inicializar WebSocket
-        self.ws_manager = WebSocketManager()
-        self.setup_websocket_handlers()
-        self.ws_manager.start()
-        
-        # Criar barra superior estilo navegador
-        self.create_toolbar()
-        
-        # Criar notebook para as abas
-        self.notebook = ttk.Notebook(self.root)
-        self.notebook.pack(fill='both', expand=True)
-        
-        # Inicializar as abas
-        self.init_tabs()
-        
-        self.notification_system = create_notification_system(self.root)        
-    def setup_websocket_handlers(self):
-        """Configura os handlers para eventos WebSocket"""
-        self.ws_manager.register_callback('print_request', self.handle_print_request)
-        self.ws_manager.register_callback('automation_status', self.handle_automation_status)
-        self.ws_manager.register_callback('question', self.handle_automation_question)
-        
-    async def handle_print_request(self, data):
-        """Lida com solicitações de prints da automação"""
-        image_path = data.get('image_path')
-        question = data.get('question')
-        
-        # Usar thread-safe call para atualizar UI
-        self.root.after(0, lambda: self.autobot_tab.display_print(image_path, question))
-        
-        return {'status': 'received'}
-        
-    async def handle_automation_status(self, data):
-        """Atualiza o status da automação na interface"""
-        status = data.get('status')
-        message = data.get('message')
-        
-        # Atualizar UI de acordo com o status
-        self.root.after(0, lambda: self.update_automation_status(status, message))
-        
-        return {'status': 'updated'}
-        
-    async def handle_automation_question(self, data):
-        """Processa perguntas da automação"""
-        question = data.get('question')
-        image_path = data.get('image_path')
-        
-        # Exibir pergunta na aba AutoBot
-        self.root.after(0, lambda: self.autobot_tab.show_question(question, image_path))
-        
-        return {'status': 'question_received'}        
-    def init_tabs(self):
-        # Removidas as referências aos arquivos deletados
-        dashboard_tab = create_dashboard_tab(self.notebook)
-        self.notebook.add(dashboard_tab, text="Dashboard")
-        
-        logs_tab = create_logs_tab(self.notebook)
-        self.notebook.add(logs_tab, text="Logs")
-        
-        settings_tab = create_settings_tab(self.notebook)
-        self.notebook.add(settings_tab, text="Configurações")
-        
-        group_config_tab = create_group_config_tab(self.notebook)
-        self.notebook.add(group_config_tab, text="Grupos")
-        
-        self.autobot_tab = self.create_autobot_tab()
+    def __init__(self, root):
+        self.root = root
+        self.root.title("AutoBot - Sistema de Automação de Apostas Esportivas")
+
+        self.notebook = ttk.Notebook(root)
+        self.notebook.pack(expand=True, fill="both")
+
+        # Criação das abas
+        self.autobot_tab = ttk.Frame(self.notebook)
+        self.learning_tab = ttk.Frame(self.notebook)
+        self.config_tab = ttk.Frame(self.notebook)
+        self.automation_tab = ttk.Frame(self.notebook)
+        self.spreadsheet_tab = ttk.Frame(self.notebook)
+        self.dashboard_tab = ttk.Frame(self.notebook)
+
+        # Adição das abas ao notebook
         self.notebook.add(self.autobot_tab, text="AutoBot")
-        
-        self.chickenbet_tab = self.create_chickenbet_tab()
-        self.notebook.add(self.chickenbet_tab, text="The New ChickenBet")        
-    def toggle_automation(self):
-        """Ativa/desativa a automação com base nas funções selecionadas"""
-        if not self.conferencia_var.get() and not self.atendimento_var.get():
-            messagebox.showwarning("Aviso", "Selecione pelo menos uma função para ativar")
-            return
-            
-        # Aqui será implementada a lógica de ativação da automação
-        
-    def update_automation_state(self):
-        """Atualiza estado dos botões baseado nas seleções"""
-        if self.atendimento_var.get() and not self.conferencia_var.get():
-            messagebox.showwarning("Aviso", "Atendimento requer Conferência ativa")
-            self.atendimento_var.set(False)
-    
-    def create_autobot_tab(self):
-        # Implementação da aba AutoBot
-        return tk.Frame(self.notebook)
+        self.notebook.add(self.learning_tab, text="Aprendizado")
+        self.notebook.add(self.config_tab, text="Configuração")
+        self.notebook.add(self.automation_tab, text="Automação")
+        self.notebook.add(self.spreadsheet_tab, text="Planilha")
+        self.notebook.add(self.dashboard_tab, text="Dashboard")
 
-    def add_notification(self, message):
-        self.notification_system.add_notification(message)
+        # Configuração das abas
+        self.setup_autobot_tab()
+        self.setup_learning_tab()
+        self.setup_config_tab()
+        self.setup_automation_tab()
+        self.setup_spreadsheet_tab()
+        self.setup_dashboard_tab()
 
-def start_interface():
-    main_interface = MainInterface()
-    main_interface.root.mainloop()
+    def setup_autobot_tab(self):
+        self.log_text = tk.Text(self.autobot_tab, height=20, width=50)
+        self.log_text.pack(padx=10, pady=10)
+
+        self.image_label = ttk.Label(self.autobot_tab)
+        self.image_label.pack(padx=10, pady=10)
+
+    def setup_learning_tab(self):
+        self.learning_canvas = tk.Canvas(self.learning_tab, width=800, height=600)
+        self.learning_canvas.pack(padx=10, pady=10)
+
+        self.instruction_label = ttk.Label(self.learning_tab, text="Selecione a área do elemento:")
+        self.instruction_label.pack(pady=5)
+
+        self.element_name_entry = ttk.Entry(self.learning_tab, width=30)
+        self.element_name_entry.pack(pady=5)
+
+        self.save_button = ttk.Button(self.learning_tab, text="Salvar Área", command=self.save_selected_area)
+        self.save_button.pack(pady=5)
+
+    def update_log(self, message):
+        self.log_text.insert(tk.END, message + "\n")
+        self.log_text.see(tk.END)
+
+    def update_image(self, image):
+        photo = ImageTk.PhotoImage(image)
+        self.image_label.config(image=photo)
+        self.image_label.image = photo
+
+    def show_learning_image(self, image):
+        self.learning_image = image
+        photo = ImageTk.PhotoImage(image)
+        self.learning_canvas.create_image(0, 0, anchor=tk.NW, image=photo)
+        self.learning_canvas.image = photo
+
+    def save_selected_area(self):
+        # Implementar lógica para salvar a área selecionada
+        pass
+
+    def request_element_identification(self, image, element_name):
+        self.show_learning_image(image)
+        self.instruction_label.config(text=f"Selecione a área para: {element_name}")
+        # Implementar lógica para capturar a seleção do usuário
+
+    def setup_config_tab(self):
+        # Implementar configurações do sistema
+        label = ttk.Label(self.config_tab, text="Configurações do Sistema")
+        label.pack(padx=10, pady=10)
+
+    def setup_automation_tab(self):
+        # Implementar controles de automação
+        label = ttk.Label(self.automation_tab, text="Controles de Automação")
+        label.pack(padx=10, pady=10)
+
+    def setup_spreadsheet_tab(self):
+        # Implementar visualização/edição de planilhas
+        label = ttk.Label(self.spreadsheet_tab, text="Planilhas")
+        label.pack(padx=10, pady=10)
+
+    def setup_dashboard_tab(self):
+        # Implementar dashboards
+        label = ttk.Label(self.dashboard_tab, text="Dashboard")
+        label.pack(padx=10, pady=10)

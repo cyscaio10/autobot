@@ -1,63 +1,33 @@
+import pyautogui
 import time
-import random
-import tkinter as tk
 
 class ChatAutomation:
-    def __init__(self, chat_interface):
-        """
-        chat_interface: Instância do componente que controla a exibição dos prints do chat.
-        Essa interface deve possuir os métodos abertos para:
-          - expandir um print pelo índice (open_full_print)
-          - navegar entre os prints na visualização ampliada (show_next e show_prev)
-          - retornar o número total de prints (através do atributo prints)
-        """
-        self.chat_interface = chat_interface
+    def __init__(self, chat_window_title):
+        self.chat_window_title = chat_window_title
 
-    def human_like_delay(self, min_delay=0.5, max_delay=1.5):
-        time.sleep(random.uniform(min_delay, max_delay))
+    def focus_chat_window(self):
+        pyautogui.getWindowsWithTitle(self.chat_window_title)[0].activate()
 
-    def expand_and_navigate_prints(self):
-        """
-        Para imprimir a sequência completa a partir de uma miniatura:
-          1. Clica para expandir o primeiro print visível.
-          2. Navega (clicando “Próximo”) até que todas as imagens acumuladas (mesmo que nem todas estejam visíveis como thumbnails) sejam percorridas.
-          3. Em cada print, pode rodar uma análise (por exemplo, reconhecimento da aposta).
-        """
-        total = len(self.chat_interface.prints)
-        if total == 0:
-            print("Nenhum print disponível para processar.")
-            return
+    def send_message(self, message):
+        self.focus_chat_window()
+        pyautogui.typewrite(message)
+        pyautogui.press('enter')
 
-        # Expande o primeiro print (índice 0)
-        print("Expandindo o print na posição 0")
-        # Chama a função que cria a janela de visualização para o print selecionado.
-        self.chat_interface.open_full_print(0)
-        self.human_like_delay()
+    def capture_chat_screenshot(self):
+        self.focus_chat_window()
+        screenshot = pyautogui.screenshot()
+        return screenshot
 
-        # Simula a navegação por todos os prints existentes
-        for i in range(1, total):
-            # Pode ser adicionado aqui a lógica que cheque se o print atual contém a informação desejada.
-            print(f"Navegando para o print {i}")
-            self.chat_interface.show_next()
-            self.human_like_delay()
+    def scroll_chat(self, amount):
+        self.focus_chat_window()
+        pyautogui.scroll(amount)
 
-        # Volta para o primeiro print, se necessário (ou fecha a visualização ampliada)
-        print("Finalizada a navegação entre os prints.")
-        self.chat_interface.full_window.destroy()
-
-    def process_prints_for_aposta(self):
-        """
-        Função integradora que inicia a sequência de expansão e navegação.
-        Pode ser chamada tanto pela automação quanto pelo operador quando a
-        análise dos prints precisa ser realizada para reconhecimento completo da aposta.
-        """
-        try:
-            self.expand_and_navigate_prints()
-            # Aqui se integraria a lógica de análise da imagem (OCR, comparação com padrões, etc.)
-            # Ex.: dados = image_recognition.process_print(self.chat_interface.prints[atual_index])
-        except Exception as e:
-            print(f"Erro durante o processamento dos prints: {e}")
-
+    def find_and_click_image(self, image_path, confidence=0.9):
+        location = pyautogui.locateOnScreen(image_path, confidence=confidence)
+        if location:
+            pyautogui.click(location)
+            return True
+        return False
 
 # Exemplo de uso integrado com a interface (aqui usamos o ChatInterface definido para fins de automação)
 if __name__ == "__main__":
